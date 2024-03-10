@@ -1,5 +1,11 @@
 import SceneKit
 extension SCNGeometrySource {
+    convenience init(vertexCount: Int, vertexBuffer: MTLBuffer) {
+        self.init(buffer: vertexBuffer, vertexFormat: .float3, semantic: .vertex, vertexCount: vertexCount, dataOffset: 0, dataStride: MemoryLayout<vector_float3>.size)
+    }
+    convenience init(normalCount: Int, normalBuffer: MTLBuffer) {
+        self.init(buffer: normalBuffer, vertexFormat: .float3, semantic: .normal, vertexCount: normalCount, dataOffset: 0, dataStride: MemoryLayout<vector_float3>.size)
+    }
     func process<A, B>(input: A.Type, output: B.Type, array: inout [B]) {
         self.data.withUnsafeBytes({ pointer in
             let address = pointer.baseAddress!

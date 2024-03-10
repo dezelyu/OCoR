@@ -3,6 +3,10 @@ class ModelNode: SCNNode {
     var vertices: [vector_float3]!
     var normals: [vector_float3]!
     var indices: [UInt32]!
+    var vertexInputBuffer: MTLBuffer!
+    var normalInputBuffer: MTLBuffer!
+    var vertexOutputBuffer: MTLBuffer!
+    var normalOutputBuffer: MTLBuffer!
     var meshNode: SCNNode!
     required init?(coder: NSCoder) {
         super.init(coder: coder)
@@ -10,6 +14,7 @@ class ModelNode: SCNNode {
     override init() {
         super.init()
         self.initializeMeshData()
+        self.initializeMeshBuffers()
         self.initializeMeshNode()
     }
     func initializeMeshData() {
@@ -32,9 +37,18 @@ class ModelNode: SCNNode {
         self.normals = normals
         self.indices = indices
     }
+    func initializeMeshBuffers() {
+        let device = MTLCreateSystemDefaultDevice()!
+        let length = min(self.vertices.count, self.normals.count) * MemoryLayout<vector_float3>.size
+        let options = MTLResourceOptions.cpuCacheModeWriteCombined
+        self.vertexInputBuffer = device.makeBuffer(bytes: self.vertices, length: length, options: options)!
+        self.normalInputBuffer = device.makeBuffer(bytes: self.normals, length: length, options: options)!
+        self.vertexOutputBuffer = device.makeBuffer(bytes: self.vertices, length: length, options: options)!
+        self.normalOutputBuffer = device.makeBuffer(bytes: self.normals, length: length, options: options)!
+    }
     func initializeMeshNode() {
-        let vertexSource = SCNGeometrySource(vertices: self.vertices.map({ vertex in return SCNVector3(vertex) }))
-        let normalSource = SCNGeometrySource(normals: self.normals.map({ normal in return SCNVector3(normal) }))
+        let vertexSource = SCNGeometrySource(vertexCount: self.vertices.count, vertexBuffer: self.vertexOutputBuffer)
+        let normalSource = SCNGeometrySource(normalCount: self.normals.count, normalBuffer: self.normalOutputBuffer)
         let element = SCNGeometryElement(indices: self.indices, primitiveType: .triangles)
         let geometry = SCNGeometry(sources: [vertexSource, normalSource], elements: [element])
         let material = SCNMaterial()
