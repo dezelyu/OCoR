@@ -1,6 +1,6 @@
 import SceneKit
 class Scene: SCNScene {
-    var modelNode: SCNNode!
+    var modelNode: ModelNode!
     var cameraNode: SCNNode!
     required init?(coder: NSCoder) {
         super.init(coder: coder)
@@ -11,14 +11,7 @@ class Scene: SCNScene {
         self.initializeCameraNode()
     }
     func initializeModelNode() {
-        let modelScene = SCNScene(named: "Assets.scnassets/Model.scn")!
-        let modelNode = modelScene.rootNode.clone()
-        let modelRoot = modelNode.childNode(withName: "root", recursively: false)!
-        let animationScene = SCNScene(named: "Assets.scnassets/Animation.scn")!
-        let animationRoot = animationScene.rootNode.childNode(withName: "root", recursively: false)!
-        let animationKey = animationRoot.animationKeys.first!
-        let animationPlayer = animationRoot.animationPlayer(forKey: animationKey)!
-        modelRoot.addAnimationPlayer(animationPlayer, forKey: animationKey)
+        let modelNode = ModelNode()
         self.rootNode.addChildNode(modelNode)
         self.modelNode = modelNode
     }
