@@ -4,6 +4,9 @@ class ModelNode: SCNNode {
         var boneIndices: vector_int8
         var boneWeights: vector_float8
     }
+    var rootNode: SCNNode!
+    var boneNodes: [SCNNode]!
+    var bindMatrices: [SCNMatrix4]!
     var skinningData: [SkinningData]!
     var vertices: [vector_float3]!
     var normals: [vector_float3]!
@@ -29,9 +32,16 @@ class ModelNode: SCNNode {
         var normals = [vector_float3]()
         var indices = [UInt32]()
         let modelScene = SCNScene(named: "Assets.scnassets/Model.scn")!
+        let rootNode = modelScene.rootNode.childNode(withName: "root", recursively: false)!
         let meshNode = modelScene.rootNode.childNode(withName: "mesh", recursively: false)!
         let meshGeometry = meshNode.geometry!
         let skinner = meshNode.skinner!
+        var boneNodes = [SCNNode]()
+        var bindMatrices = [SCNMatrix4]()
+        for boneNode in skinner.bones {
+            boneNodes.append(boneNode)
+            bindMatrices.append(SCNMatrix4Invert(boneNode.worldTransform))
+        }
         var skinnerBoneIndices = [[Int32]]()
         var skinnerBoneWeights = [[Float]]()
         skinner.process(influenceCount: 8, boneIndices: &skinnerBoneIndices, boneWeights: &skinnerBoneWeights)
@@ -49,6 +59,11 @@ class ModelNode: SCNNode {
         }
         let meshElement = meshGeometry.elements.first!
         meshElement.process(indices: &indices)
+        rootNode.removeFromParentNode()
+        self.addChildNode(rootNode)
+        self.rootNode = rootNode
+        self.boneNodes = boneNodes
+        self.bindMatrices = bindMatrices
         self.skinningData = skinningData
         self.vertices = vertices
         self.normals = normals
