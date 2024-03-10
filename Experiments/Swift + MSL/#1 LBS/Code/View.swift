@@ -14,4 +14,8 @@ class View: SCNView, SCNSceneRendererDelegate {
         self.isPlaying = true
         self.loops = true
     }
+    func renderer(_ renderer: SCNSceneRenderer, didApplyAnimationsAtTime time: TimeInterval) {
+        let scene = self.scene as! Scene
+        scene.rendererDidApplyAnimations()
+    }
 }

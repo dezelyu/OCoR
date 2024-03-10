@@ -27,4 +27,7 @@ class Scene: SCNScene {
         self.rootNode.addChildNode(cameraNode)
         self.cameraNode = cameraNode
     }
+    func rendererDidApplyAnimations() {
+        self.modelNode.updateBoneData()
+    }
 }

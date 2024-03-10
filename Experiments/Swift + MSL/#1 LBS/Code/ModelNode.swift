@@ -104,4 +104,16 @@ class ModelNode: SCNNode {
         self.addChildNode(modelNode)
         self.meshNode = modelNode
     }
+    func updateBoneData() {
+        let buffer = self.boneDataBuffer.contents().bindMemory(to: ModelNode.BoneData.self, capacity: self.boneNodes.count)
+        for boneIndex in 0..<self.boneNodes.count {
+            let boneNode = self.boneNodes[boneIndex]
+            let bindMatrix = self.bindMatrices[boneIndex]
+            let boneMatrix = boneNode.presentation.worldTransform
+            let transformation = matrix_float4x4(SCNMatrix4Mult(bindMatrix, boneMatrix))
+            let boneData = BoneData(transformation: transformation)
+            let pointer = buffer + boneIndex
+            pointer.pointee = boneData
+        }
+    }
 }
