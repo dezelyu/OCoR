@@ -16,6 +16,7 @@
 		C2C96CD22B92AD9700F4A8EA /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C2C96CD02B92AD9700F4A8EA /* Main.storyboard */; };
 		C2C96CDA2B92ADCC00F4A8EA /* Application.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2C96CD92B92ADCC00F4A8EA /* Application.swift */; };
 		C2C96CDE2B92AF0D00F4A8EA /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2C96CDD2B92AF0D00F4A8EA /* ViewController.swift */; };
+		C2D800BF2B9E5F6E00920E7E /* SCNSkinner.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2D800BE2B9E5F6E00920E7E /* SCNSkinner.swift */; };
 		C2E6D7292B97843F003A2B53 /* View.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2E6D7282B97843F003A2B53 /* View.swift */; };
 /* End PBXBuildFile section */
 
@@ -31,6 +32,7 @@
 		C2C96CD32B92AD9700F4A8EA /* Project.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Project.entitlements; sourceTree = "<group>"; };
 		C2C96CD92B92ADCC00F4A8EA /* Application.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Application.swift; sourceTree = "<group>"; };
 		C2C96CDD2B92AF0D00F4A8EA /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		C2D800BE2B9E5F6E00920E7E /* SCNSkinner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SCNSkinner.swift; sourceTree = "<group>"; };
 		C2E6D7282B97843F003A2B53 /* View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = View.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -50,6 +52,7 @@
 			children = (
 				C229C24E2B9E3D8300939923 /* SCNGeometrySource.swift */,
 				C229C2502B9E3DD500939923 /* SCNGeometryElement.swift */,
+				C2D800BE2B9E5F6E00920E7E /* SCNSkinner.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -183,6 +186,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C22709F62B9D4BD300CD9C5B /* Scene.swift in Sources */,
+				C2D800BF2B9E5F6E00920E7E /* SCNSkinner.swift in Sources */,
 				C2C96CDE2B92AF0D00F4A8EA /* ViewController.swift in Sources */,
 				C229C24F2B9E3D8300939923 /* SCNGeometrySource.swift in Sources */,
 				C229C2512B9E3DD500939923 /* SCNGeometryElement.swift in Sources */,
