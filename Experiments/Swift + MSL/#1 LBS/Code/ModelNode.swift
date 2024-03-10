@@ -21,6 +21,8 @@ class ModelNode: SCNNode {
     var skinningDataBuffer: MTLBuffer!
     var boneDataBuffer: MTLBuffer!
     var meshNode: SCNNode!
+    var commandQueue: MTLCommandQueue!
+    var computePipelineState: MTLComputePipelineState!
     required init?(coder: NSCoder) {
         super.init(coder: coder)
     }
@@ -29,6 +31,7 @@ class ModelNode: SCNNode {
         self.initializeMeshData()
         self.initializeMeshBuffers()
         self.initializeMeshNode()
+        self.initializeComputePipeline()
     }
     func initializeMeshData() {
         var skinningData = [SkinningData]()
@@ -103,6 +106,13 @@ class ModelNode: SCNNode {
         let modelNode = SCNNode(geometry: geometry)
         self.addChildNode(modelNode)
         self.meshNode = modelNode
+    }
+    func initializeComputePipeline() {
+        let device = MTLCreateSystemDefaultDevice()!
+        let library = device.makeDefaultLibrary()!
+        let function = library.makeFunction(name: "Compute")!
+        self.commandQueue = device.makeCommandQueue()!
+        self.computePipelineState = try! device.makeComputePipelineState(function: function)
     }
     func updateBoneData() {
         let buffer = self.boneDataBuffer.contents().bindMemory(to: ModelNode.BoneData.self, capacity: self.boneNodes.count)
