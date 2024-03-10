@@ -18,4 +18,8 @@ class View: SCNView, SCNSceneRendererDelegate {
         let scene = self.scene as! Scene
         scene.rendererDidApplyAnimations()
     }
+    func renderer(_ renderer: SCNSceneRenderer, willRenderScene scene: SCNScene, atTime time: TimeInterval) {
+        let scene = self.scene as! Scene
+        scene.rendererWillRenderScene()
+    }
 }

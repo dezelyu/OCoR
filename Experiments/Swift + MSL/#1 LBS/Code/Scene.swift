@@ -30,4 +30,7 @@ class Scene: SCNScene {
     func rendererDidApplyAnimations() {
         self.modelNode.updateBoneData()
     }
+    func rendererWillRenderScene() {
+        self.modelNode.compute()
+    }
 }

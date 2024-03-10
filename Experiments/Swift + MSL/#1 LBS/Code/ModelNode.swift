@@ -31,6 +31,7 @@ class ModelNode: SCNNode {
         self.initializeMeshData()
         self.initializeMeshBuffers()
         self.initializeMeshNode()
+        self.initializeAnimation()
         self.initializeComputePipeline()
     }
     func initializeMeshData() {
@@ -107,6 +108,13 @@ class ModelNode: SCNNode {
         self.addChildNode(modelNode)
         self.meshNode = modelNode
     }
+    func initializeAnimation() {
+        let animationScene = SCNScene(named: "Assets.scnassets/Animation.scn")!
+        let animationRoot = animationScene.rootNode.childNode(withName: "root", recursively: false)!
+        let animationKey = animationRoot.animationKeys.first!
+        let animationPlayer = animationRoot.animationPlayer(forKey: animationKey)!
+        self.rootNode.addAnimationPlayer(animationPlayer, forKey: "Animation")
+    }
     func initializeComputePipeline() {
         let device = MTLCreateSystemDefaultDevice()!
         let library = device.makeDefaultLibrary()!
@@ -125,5 +133,23 @@ class ModelNode: SCNNode {
             let pointer = buffer + boneIndex
             pointer.pointee = boneData
         }
+    }
+    func compute() {
+        let commandBuffer = self.commandQueue.makeCommandBuffer()!
+        var count = UInt32(self.vertices.count)
+        let gridSize = MTLSize(width: self.vertices.count / self.computePipelineState.threadExecutionWidth + 1, height: 1, depth: 1)
+        let threadgroupSize = MTLSize(width: self.computePipelineState.threadExecutionWidth, height: 1, depth: 1)
+        let computeCommandEncoder = commandBuffer.makeComputeCommandEncoder()!
+        computeCommandEncoder.setComputePipelineState(self.computePipelineState)
+        computeCommandEncoder.setBuffer(self.vertexInputBuffer, offset: 0, index: 0)
+        computeCommandEncoder.setBuffer(self.normalInputBuffer, offset: 0, index: 1)
+        computeCommandEncoder.setBuffer(self.vertexOutputBuffer, offset: 0, index: 2)
+        computeCommandEncoder.setBuffer(self.normalOutputBuffer, offset: 0, index: 3)
+        computeCommandEncoder.setBuffer(self.skinningDataBuffer, offset: 0, index: 4)
+        computeCommandEncoder.setBuffer(self.boneDataBuffer, offset: 0, index: 5)
+        computeCommandEncoder.setBytes(&count, length: MemoryLayout<UInt32>.stride, index: 6)
+        computeCommandEncoder.dispatchThreadgroups(gridSize, threadsPerThreadgroup: threadgroupSize)
+        computeCommandEncoder.endEncoding()
+        commandBuffer.commit()
     }
 }
