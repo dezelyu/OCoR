@@ -1,7 +1,9 @@
 import SceneKit
 class View: SCNView, SCNSceneRendererDelegate {
     func load() {
-        self.scene = SCNScene()
+        let scene = Scene()
+        self.pointOfView = scene.cameraNode
+        self.scene = scene
         self.delegate = self
         self.allowsCameraControl = true
         self.isJitteringEnabled = true
