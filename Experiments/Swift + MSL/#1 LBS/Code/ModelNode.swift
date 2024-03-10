@@ -4,6 +4,9 @@ class ModelNode: SCNNode {
         var boneIndices: vector_int8
         var boneWeights: vector_float8
     }
+    struct BoneData {
+        var transformation: matrix_float4x4
+    }
     var rootNode: SCNNode!
     var boneNodes: [SCNNode]!
     var bindMatrices: [SCNMatrix4]!
@@ -16,6 +19,7 @@ class ModelNode: SCNNode {
     var vertexOutputBuffer: MTLBuffer!
     var normalOutputBuffer: MTLBuffer!
     var skinningDataBuffer: MTLBuffer!
+    var boneDataBuffer: MTLBuffer!
     var meshNode: SCNNode!
     required init?(coder: NSCoder) {
         super.init(coder: coder)
@@ -73,12 +77,14 @@ class ModelNode: SCNNode {
         let device = MTLCreateSystemDefaultDevice()!
         let length = min(self.vertices.count, self.normals.count) * MemoryLayout<vector_float3>.size
         let skinningDataBufferLength = self.skinningData.count * MemoryLayout<ModelNode.SkinningData>.size
+        let boneDataBufferLength = self.boneNodes.count * MemoryLayout<ModelNode.BoneData>.size
         let options = MTLResourceOptions.cpuCacheModeWriteCombined
         self.vertexInputBuffer = device.makeBuffer(bytes: self.vertices, length: length, options: options)!
         self.normalInputBuffer = device.makeBuffer(bytes: self.normals, length: length, options: options)!
         self.vertexOutputBuffer = device.makeBuffer(bytes: self.vertices, length: length, options: options)!
         self.normalOutputBuffer = device.makeBuffer(bytes: self.normals, length: length, options: options)!
         self.skinningDataBuffer = device.makeBuffer(bytes: self.skinningData, length: skinningDataBufferLength, options: options)!
+        self.boneDataBuffer = device.makeBuffer(length: boneDataBufferLength, options: options)!
     }
     func initializeMeshNode() {
         let vertexSource = SCNGeometrySource(vertexCount: self.vertices.count, vertexBuffer: self.vertexOutputBuffer)
