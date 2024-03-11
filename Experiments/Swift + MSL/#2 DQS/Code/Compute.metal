@@ -6,6 +6,7 @@ struct SkinningData {
 };
 struct BoneData {
     float4x4 transformation;
+    float2x4 dualQuaternion;
 };
 #define SKINNING_ARGUMENTS \
 const float3 vertexInput, \

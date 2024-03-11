@@ -6,6 +6,7 @@ class ModelNode: SCNNode {
     }
     struct BoneData {
         var transformation: matrix_float4x4
+        var dualQuaternion: matrix_float2x4
     }
     var rootNode: SCNNode!
     var boneNodes: [SCNNode]!
@@ -129,7 +130,8 @@ class ModelNode: SCNNode {
             let bindMatrix = self.bindMatrices[boneIndex]
             let boneMatrix = boneNode.presentation.worldTransform
             let transformation = matrix_float4x4(SCNMatrix4Mult(bindMatrix, boneMatrix))
-            let boneData = BoneData(transformation: transformation)
+            let dualQuaternion = SCNMatrix4(transformation).dualQuaternion
+            let boneData = BoneData(transformation: transformation, dualQuaternion: dualQuaternion)
             let pointer = buffer + boneIndex
             pointer.pointee = boneData
         }
