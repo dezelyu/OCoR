@@ -4,6 +4,30 @@ class ModelNode: SCNNode {
         var boneIndices: vector_int8
         var boneWeights: vector_float8
     }
+    struct BoneWeightData {
+        var weights: (
+            Float, Float, Float, Float, Float,
+            Float, Float, Float, Float, Float,
+            Float, Float, Float, Float, Float,
+            Float, Float, Float, Float, Float,
+            Float, Float, Float, Float, Float,
+            Float, Float, Float, Float, Float,
+            Float, Float, Float, Float, Float,
+            Float, Float, Float, Float, Float,
+            Float, Float, Float, Float, Float,
+            Float, Float, Float, Float, Float,
+            Float, Float, Float, Float, Float,
+            Float, Float, Float, Float, Float,
+            Float, Float, Float, Float, Float,
+            Float, Float, Float, Float, Float,
+            Float, Float, Float, Float, Float,
+            Float, Float, Float, Float, Float,
+            Float, Float, Float, Float, Float,
+            Float, Float, Float, Float, Float,
+            Float, Float, Float, Float, Float,
+            Float, Float, Float, Float, Float
+        )
+    }
     struct BoneData {
         var transformation: matrix_float4x4
         var dualQuaternion: matrix_float2x4
@@ -12,6 +36,7 @@ class ModelNode: SCNNode {
     var boneNodes: [SCNNode]!
     var bindMatrices: [SCNMatrix4]!
     var skinningData: [SkinningData]!
+    var boneWeightData: [BoneWeightData]!
     var vertices: [vector_float3]!
     var normals: [vector_float3]!
     var indices: [UInt32]!
@@ -37,6 +62,7 @@ class ModelNode: SCNNode {
     }
     func initializeMeshData() {
         var skinningData = [SkinningData]()
+        var boneWeightData = [BoneWeightData]()
         var vertices = [vector_float3]()
         var normals = [vector_float3]()
         var indices = [UInt32]()
@@ -58,6 +84,41 @@ class ModelNode: SCNNode {
             let boneIndices = vector_int8(skinnerBoneIndices[vertexIndex])
             let boneWeights = vector_float8(skinnerBoneWeights[vertexIndex])
             skinningData.append(SkinningData(boneIndices: boneIndices, boneWeights: boneWeights))
+            let weight = Float(0.0)
+            var weights = (
+                weight, weight, weight, weight, weight,
+                weight, weight, weight, weight, weight,
+                weight, weight, weight, weight, weight,
+                weight, weight, weight, weight, weight,
+                weight, weight, weight, weight, weight,
+                weight, weight, weight, weight, weight,
+                weight, weight, weight, weight, weight,
+                weight, weight, weight, weight, weight,
+                weight, weight, weight, weight, weight,
+                weight, weight, weight, weight, weight,
+                weight, weight, weight, weight, weight,
+                weight, weight, weight, weight, weight,
+                weight, weight, weight, weight, weight,
+                weight, weight, weight, weight, weight,
+                weight, weight, weight, weight, weight,
+                weight, weight, weight, weight, weight,
+                weight, weight, weight, weight, weight,
+                weight, weight, weight, weight, weight,
+                weight, weight, weight, weight, weight,
+                weight, weight, weight, weight, weight
+            )
+            Swift.withUnsafeMutableBytes(of: &weights, { pointer in
+                let address = pointer.baseAddress!
+                let buffer = address.assumingMemoryBound(to: Float.self)
+                for index in 0..<8 {
+                    let boneIndex = Int(skinnerBoneIndices[vertexIndex][index])
+                    let boneWeight = skinnerBoneWeights[vertexIndex][index]
+                    if (boneWeight > 0.0) {
+                        buffer[boneIndex] = boneWeight
+                    }
+                }
+            })
+            boneWeightData.append(BoneWeightData(weights: weights))
         }
         for source in meshGeometry.sources {
             if (source.semantic == .vertex) {
@@ -74,6 +135,7 @@ class ModelNode: SCNNode {
         self.boneNodes = boneNodes
         self.bindMatrices = bindMatrices
         self.skinningData = skinningData
+        self.boneWeightData = boneWeightData
         self.vertices = vertices
         self.normals = normals
         self.indices = indices
