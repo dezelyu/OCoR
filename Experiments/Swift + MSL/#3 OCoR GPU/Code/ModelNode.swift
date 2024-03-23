@@ -28,6 +28,11 @@ class ModelNode: SCNNode {
             Float, Float, Float, Float, Float
         )
     }
+    struct TriangleData {
+        var area: Float
+        var center: vector_float3
+        var boneWeightData: BoneWeightData
+    }
     struct BoneData {
         var transformation: matrix_float4x4
         var dualQuaternion: matrix_float2x4
@@ -45,6 +50,10 @@ class ModelNode: SCNNode {
     var vertexOutputBuffer: MTLBuffer!
     var normalOutputBuffer: MTLBuffer!
     var skinningDataBuffer: MTLBuffer!
+    var boneWeightDataBuffer: MTLBuffer!
+    var triangleDataBuffer: MTLBuffer!
+    var indexDataBuffer: MTLBuffer!
+    var OCoRDataBuffer: MTLBuffer!
     var boneDataBuffer: MTLBuffer!
     var meshNode: SCNNode!
     var commandQueue: MTLCommandQueue!
@@ -144,6 +153,9 @@ class ModelNode: SCNNode {
         let device = MTLCreateSystemDefaultDevice()!
         let length = min(self.vertices.count, self.normals.count) * MemoryLayout<vector_float3>.size
         let skinningDataBufferLength = self.skinningData.count * MemoryLayout<ModelNode.SkinningData>.size
+        let boneWeightDataBufferLength = self.boneWeightData.count * MemoryLayout<ModelNode.BoneWeightData>.size
+        let triangleDataBufferLength = (self.indices.count / 3) * MemoryLayout<ModelNode.TriangleData>.size
+        let indexDataBufferLength = self.indices.count * MemoryLayout<UInt32>.size
         let boneDataBufferLength = self.boneNodes.count * MemoryLayout<ModelNode.BoneData>.size
         let options = MTLResourceOptions.cpuCacheModeWriteCombined
         self.vertexInputBuffer = device.makeBuffer(bytes: self.vertices, length: length, options: options)!
@@ -151,6 +163,10 @@ class ModelNode: SCNNode {
         self.vertexOutputBuffer = device.makeBuffer(bytes: self.vertices, length: length, options: options)!
         self.normalOutputBuffer = device.makeBuffer(bytes: self.normals, length: length, options: options)!
         self.skinningDataBuffer = device.makeBuffer(bytes: self.skinningData, length: skinningDataBufferLength, options: options)!
+        self.boneWeightDataBuffer = device.makeBuffer(bytes: self.boneWeightData, length: boneWeightDataBufferLength, options: options)!
+        self.triangleDataBuffer = device.makeBuffer(length: triangleDataBufferLength, options: options)!
+        self.indexDataBuffer = device.makeBuffer(bytes: self.indices, length: indexDataBufferLength, options: options)!
+        self.OCoRDataBuffer = device.makeBuffer(length: length, options: options)!
         self.boneDataBuffer = device.makeBuffer(length: boneDataBufferLength, options: options)!
     }
     func initializeMeshNode() {
