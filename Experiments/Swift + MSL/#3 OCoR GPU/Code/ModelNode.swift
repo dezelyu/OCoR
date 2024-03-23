@@ -58,6 +58,8 @@ class ModelNode: SCNNode {
     var meshNode: SCNNode!
     var commandQueue: MTLCommandQueue!
     var computePipelineState: MTLComputePipelineState!
+    var precomputeTriangleDataPipelineState: MTLComputePipelineState!
+    var precomputeOCoRDataPipelineState: MTLComputePipelineState!
     required init?(coder: NSCoder) {
         super.init(coder: coder)
     }
@@ -68,6 +70,7 @@ class ModelNode: SCNNode {
         self.initializeMeshNode()
         self.initializeAnimation()
         self.initializeComputePipeline()
+        self.initializePrecomputePipelines()
     }
     func initializeMeshData() {
         var skinningData = [SkinningData]()
@@ -200,6 +203,14 @@ class ModelNode: SCNNode {
         let function = library.makeFunction(name: "Compute")!
         self.commandQueue = device.makeCommandQueue()!
         self.computePipelineState = try! device.makeComputePipelineState(function: function)
+    }
+    func initializePrecomputePipelines() {
+        let device = MTLCreateSystemDefaultDevice()!
+        let library = device.makeDefaultLibrary()!
+        let precomputeTriangleDataFunction = library.makeFunction(name: "PrecomputeTriangleData")!
+        let precomputeOCoRDataFunction = library.makeFunction(name: "PrecomputeOCoRData")!
+        self.precomputeTriangleDataPipelineState = try! device.makeComputePipelineState(function: precomputeTriangleDataFunction)
+        self.precomputeOCoRDataPipelineState = try! device.makeComputePipelineState(function: precomputeOCoRDataFunction)
     }
     func updateBoneData() {
         let buffer = self.boneDataBuffer.contents().bindMemory(to: ModelNode.BoneData.self, capacity: self.boneNodes.count)

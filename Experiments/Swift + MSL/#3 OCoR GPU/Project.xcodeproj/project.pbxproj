@@ -13,6 +13,7 @@
 		C229C2532B9E408500939923 /* ModelNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = C229C2522B9E408500939923 /* ModelNode.swift */; };
 		C24C589B2B9F93900076BAAA /* SCNMatrix4.swift in Sources */ = {isa = PBXBuildFile; fileRef = C24C589A2B9F93900076BAAA /* SCNMatrix4.swift */; };
 		C266CEBB2B9E733300400238 /* Compute.metal in Sources */ = {isa = PBXBuildFile; fileRef = C266CEBA2B9E733300400238 /* Compute.metal */; };
+		C2ABD98B2BAE6292002524F3 /* Precompute.metal in Sources */ = {isa = PBXBuildFile; fileRef = C2ABD98A2BAE6292002524F3 /* Precompute.metal */; };
 		C2C96CCD2B92AD9600F4A8EA /* Assets.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = C2C96CCC2B92AD9600F4A8EA /* Assets.scnassets */; };
 		C2C96CCF2B92AD9700F4A8EA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C2C96CCE2B92AD9700F4A8EA /* Assets.xcassets */; };
 		C2C96CD22B92AD9700F4A8EA /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C2C96CD02B92AD9700F4A8EA /* Main.storyboard */; };
@@ -29,6 +30,7 @@
 		C229C2522B9E408500939923 /* ModelNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelNode.swift; sourceTree = "<group>"; };
 		C24C589A2B9F93900076BAAA /* SCNMatrix4.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SCNMatrix4.swift; sourceTree = "<group>"; };
 		C266CEBA2B9E733300400238 /* Compute.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Compute.metal; sourceTree = "<group>"; };
+		C2ABD98A2BAE6292002524F3 /* Precompute.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Precompute.metal; sourceTree = "<group>"; };
 		C2C96CC52B92AD9600F4A8EA /* Project.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Project.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C2C96CCC2B92AD9600F4A8EA /* Assets.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = Assets.scnassets; sourceTree = "<group>"; };
 		C2C96CCE2B92AD9700F4A8EA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -104,6 +106,7 @@
 				C2E5FC0B2B9D35DE002C8FC6 /* System */,
 				C229C24D2B9E3D6300939923 /* Extensions */,
 				C266CEBA2B9E733300400238 /* Compute.metal */,
+				C2ABD98A2BAE6292002524F3 /* Precompute.metal */,
 				C229C2522B9E408500939923 /* ModelNode.swift */,
 				C22709F52B9D4BD300CD9C5B /* Scene.swift */,
 				C2E6D7282B97843F003A2B53 /* View.swift */,
@@ -195,6 +198,7 @@
 				C2D800BF2B9E5F6E00920E7E /* SCNSkinner.swift in Sources */,
 				C2C96CDE2B92AF0D00F4A8EA /* ViewController.swift in Sources */,
 				C229C24F2B9E3D8300939923 /* SCNGeometrySource.swift in Sources */,
+				C2ABD98B2BAE6292002524F3 /* Precompute.metal in Sources */,
 				C229C2512B9E3DD500939923 /* SCNGeometryElement.swift in Sources */,
 				C2C96CDA2B92ADCC00F4A8EA /* Application.swift in Sources */,
 				C229C2532B9E408500939923 /* ModelNode.swift in Sources */,
