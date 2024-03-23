@@ -71,6 +71,8 @@ class ModelNode: SCNNode {
         self.initializeAnimation()
         self.initializeComputePipeline()
         self.initializePrecomputePipelines()
+        self.precomputeTriangleData()
+        self.precomputeOCoRData()
     }
     func initializeMeshData() {
         var skinningData = [SkinningData]()
@@ -242,5 +244,40 @@ class ModelNode: SCNNode {
         computeCommandEncoder.dispatchThreadgroups(gridSize, threadsPerThreadgroup: threadgroupSize)
         computeCommandEncoder.endEncoding()
         commandBuffer.commit()
+    }
+    func precomputeTriangleData() {
+        let commandBuffer = self.commandQueue.makeCommandBuffer()!
+        var count = UInt32(self.indices.count / 3)
+        let gridSize = MTLSize(width: (self.indices.count / 3) / self.precomputeTriangleDataPipelineState.threadExecutionWidth + 1, height: 1, depth: 1)
+        let threadgroupSize = MTLSize(width: self.precomputeTriangleDataPipelineState.threadExecutionWidth, height: 1, depth: 1)
+        let computeCommandEncoder = commandBuffer.makeComputeCommandEncoder()!
+        computeCommandEncoder.setComputePipelineState(self.precomputeTriangleDataPipelineState)
+        computeCommandEncoder.setBuffer(self.indexDataBuffer, offset: 0, index: 0)
+        computeCommandEncoder.setBuffer(self.vertexInputBuffer, offset: 0, index: 1)
+        computeCommandEncoder.setBuffer(self.boneWeightDataBuffer, offset: 0, index: 2)
+        computeCommandEncoder.setBuffer(self.triangleDataBuffer, offset: 0, index: 3)
+        computeCommandEncoder.setBytes(&count, length: MemoryLayout<UInt32>.stride, index: 4)
+        computeCommandEncoder.dispatchThreadgroups(gridSize, threadsPerThreadgroup: threadgroupSize)
+        computeCommandEncoder.endEncoding()
+        commandBuffer.commit()
+        commandBuffer.waitUntilCompleted()
+    }
+    func precomputeOCoRData() {
+        let commandBuffer = self.commandQueue.makeCommandBuffer()!
+        var triangleCount = UInt32(self.indices.count / 3)
+        var vertexCount = UInt32(self.vertices.count)
+        let gridSize = MTLSize(width: self.vertices.count / self.precomputeOCoRDataPipelineState.threadExecutionWidth + 1, height: 1, depth: 1)
+        let threadgroupSize = MTLSize(width: self.precomputeOCoRDataPipelineState.threadExecutionWidth, height: 1, depth: 1)
+        let computeCommandEncoder = commandBuffer.makeComputeCommandEncoder()!
+        computeCommandEncoder.setComputePipelineState(self.precomputeOCoRDataPipelineState)
+        computeCommandEncoder.setBuffer(self.boneWeightDataBuffer, offset: 0, index: 0)
+        computeCommandEncoder.setBuffer(self.triangleDataBuffer, offset: 0, index: 1)
+        computeCommandEncoder.setBuffer(self.OCoRDataBuffer, offset: 0, index: 2)
+        computeCommandEncoder.setBytes(&triangleCount, length: MemoryLayout<UInt32>.stride, index: 3)
+        computeCommandEncoder.setBytes(&vertexCount, length: MemoryLayout<UInt32>.stride, index: 4)
+        computeCommandEncoder.dispatchThreadgroups(gridSize, threadsPerThreadgroup: threadgroupSize)
+        computeCommandEncoder.endEncoding()
+        commandBuffer.commit()
+        commandBuffer.waitUntilCompleted()
     }
 }
