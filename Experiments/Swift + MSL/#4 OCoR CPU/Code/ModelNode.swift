@@ -42,6 +42,7 @@ class ModelNode: SCNNode {
     var bindMatrices: [SCNMatrix4]!
     var skinningData: [SkinningData]!
     var boneWeightData: [BoneWeightData]!
+    var boneWeightArrayData: [[Float]]!
     var vertices: [vector_float3]!
     var normals: [vector_float3]!
     var indices: [UInt32]!
@@ -77,6 +78,7 @@ class ModelNode: SCNNode {
     func initializeMeshData() {
         var skinningData = [SkinningData]()
         var boneWeightData = [BoneWeightData]()
+        var boneWeightArrayData = [[Float]]()
         var vertices = [vector_float3]()
         var normals = [vector_float3]()
         var indices = [UInt32]()
@@ -133,6 +135,15 @@ class ModelNode: SCNNode {
                 }
             })
             boneWeightData.append(BoneWeightData(weights: weights))
+            var boneWeightArray = [Float](repeating: 0.0, count: 100)
+            for index in 0..<8 {
+                let boneIndex = Int(skinnerBoneIndices[vertexIndex][index])
+                let boneWeight = skinnerBoneWeights[vertexIndex][index]
+                if (boneWeight > 0.0) {
+                    boneWeightArray[boneIndex] = boneWeight
+                }
+            }
+            boneWeightArrayData.append(boneWeightArray)
         }
         for source in meshGeometry.sources {
             if (source.semantic == .vertex) {
@@ -150,6 +161,7 @@ class ModelNode: SCNNode {
         self.bindMatrices = bindMatrices
         self.skinningData = skinningData
         self.boneWeightData = boneWeightData
+        self.boneWeightArrayData = boneWeightArrayData
         self.vertices = vertices
         self.normals = normals
         self.indices = indices
